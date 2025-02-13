@@ -1,0 +1,1 @@
+pip install numpy pandas matplotlib seaborn wordcloud nltk scikit-learn imbalanced-learn
