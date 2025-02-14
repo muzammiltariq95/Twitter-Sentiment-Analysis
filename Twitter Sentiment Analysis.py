@@ -110,3 +110,78 @@ plt.axis('off')
 plt.title("Word Cloud for Negative Sentiment", fontsize=16)
 plt.show()
 
+X = dataset['text']
+y = dataset['target']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, 
+                                                    
+                                                    cv = CountVectorizer()
+X_train = cv.fit_transform(X_train)
+X_test = cv.transform(X_test)random_state=42)
+
+print("\n All data labels")
+print(dataset.groupby('target').count())
+
+resampler = RandomUnderSampler(random_state=0)
+X_train, y_train = resampler.fit_resample(X_train, y_train)
+sns.countplot(x=y_train)
+plt.show()
+
+model = MultinomialNB()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+acc=metrics.accuracy_score(y_test,y_pred)
+print('accuracy:%.2f\n\n'%(acc))
+cm = metrics.confusion_matrix(y_test, y_pred)
+print("Confusion Matrix:")
+print(cm,'\n\n')
+print('--------------------------------------------------------')
+result = metrics.classification_report(y_test, y_pred)
+print("Classification Report:\n",)
+print (result)
+
+plt.figure(figsize=(8, 6))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
+            xticklabels=['Negative', 'Positive','Neutral','Irrelevant'], 
+            yticklabels=['Negative', 'Positive','Neutral','Irrelevant'])
+plt.xlabel('Predicted')
+plt.ylabel('Actual')
+plt.title('Confusion Matrix')
+plt.show()
+
+def analyze_sentiment(review_text):
+    # Preprocess the review text
+    processed_text = preprocessing(review_text)
+    vectorized_text = cv.transform([processed_text])
+    sentiment = model.predict(vectorized_text)[0]
+    return f"Sentiment for your review: {sentiment}"
+
+analyze_sentiment('The service was excellent, very satisfied!')
+
+analyze_sentiment('I absolutely love this product!')
+
+analyze_sentiment("This is the worst experience I have ever had")
+
+analyze_sentiment("The product broke after one use, awful!")
+
+analyze_sentiment("It’s okay, nothing special to be honest.")
+
+analyze_sentiment("Meh, could’ve been better, but not bad.")
+
+analyze_sentiment("What’s the weather like today?")
+
+analyze_sentiment("I’ll be visiting my friend later.")
+
+pos_freq = FreqDist(positive_text)
+pos_freq.tabulate(10)
+
+neg_freq = FreqDist(negative_text)
+neg_freq.tabulate(10)
+
+pos_freq.plot(50)
+plt.show()
+
+neg_freq.plot(50)
+plt.show()
